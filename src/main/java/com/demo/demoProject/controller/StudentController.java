@@ -42,12 +42,13 @@ public class StudentController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<StudentDTO> getStudentById(@PathVariable int id) {
-		
-		if(studentService.findById(id)) {
-		StudentDTO dto = mapper.convertValue(studentService.getStudentById(id), StudentDTO.class);
-		return new ResponseEntity<>(dto, HttpStatus.OK);}else {
-			throw new RecordNotFoundException("No record found for id : "+id);
+	public ResponseEntity<StudentDTO> getStudentById(@PathVariable(name = "id", required = false) int id) {
+
+		if (studentService.findById(id)) {
+			StudentDTO dto = mapper.convertValue(studentService.getStudentById(id), StudentDTO.class);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		} else {
+			throw new RecordNotFoundException("No record found for id : " + id);
 		}
 	}
 
@@ -58,11 +59,11 @@ public class StudentController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteStudent(@PathVariable int id) {
-		
-		if(studentService.findById(id)) {
+
+		if (studentService.findById(id)) {
 			return new ResponseEntity<>(studentService.deleteStudent(id));
-		}else {
-			throw new RecordNotFoundException("No record found for id : "+id);
+		} else {
+			throw new RecordNotFoundException("No record found for id : " + id);
 		}
 	}
 
@@ -76,5 +77,15 @@ public class StudentController {
 		student.setMobileNo(mobileNo);
 		student.setClassName(className);
 		return new ResponseEntity<Student>(studentService.updateStudent(student), HttpStatus.OK);
+	}
+
+	@GetMapping("/{search}/students")
+	public ResponseEntity<List<Student>> searchStudent(@PathVariable(name = "search", required = true) String search) {
+		List<Student> studentList = studentService.searchStudent("%"+search+"%");
+		if (studentList.isEmpty()) {
+			throw new RecordNotFoundException("No any record associated to search '" + search + "' keyword");
+		} else {
+			return new ResponseEntity<>(studentList, HttpStatus.OK);
+		}
 	}
 }

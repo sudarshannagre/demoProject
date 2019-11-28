@@ -19,4 +19,6 @@ public interface StudentService {
 	public boolean findById(int id);
 	
 	public Student updateStudent(Student student);
+	
+	public List<Student> searchStudent(String name);
 }
